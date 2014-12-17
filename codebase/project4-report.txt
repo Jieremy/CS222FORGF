@@ -1,0 +1,80 @@
+Project 4 Report
+
+1. Overview
+
+In project 4, we continued implementing the RelationManager (RM). In addition, we implemented a Query Engine (QE). 
+
+2. Design & Implementation
+
+   2.1	QE part
+	
+	In this Class, We not only implement functions are already defined by code base, but also add some functions and struct to meet the requirements.
+
+	Below, We will not only describe some key functions and struct, but also provide our algorithm.
+	
+	2.1.1 Struct
+
+		DataDir:
+		This Struct include two elements: 1.dataIndex   2. data
+		dataIndex is a vector<int> used to store the every matched data's offset
+		data(void *) uesd to store every matched data
+
+	        AggreDir:
+		This Struct uesd to Aggregate's function
+		This Struct include four elements: 1.count  2.value  grouplength 4.groupvalue
+ 		count uesd to store the count's number
+		value is the resulted value, such as max(),min(),sum()
+		grouplength is the group attribute value's length
+	        groupvalue is the value of the group attribute
+
+	2.1.3 Block Nested-Loop Join
+		
+		First of all, we uesd buildleftHashtable function to create in-memory hashtable based on inner S
+		Then every time we will use one page as an input buffer for scanneing the inner S, anothere one page
+		to hold the result. the all remaining pages to hold the block of outer R
+		For each time we read numRecords record into inputbuffer And uesd every record to matched the result data.
+		add<r,s> to result data into outbuffer.
+		At last, when call getNextTuple function, we will get record from outputbuffer one by one
+
+		In this Class, We defined three hashmap :  _inthashmap _floathashmap _stringhashmap uesd to build in-memory
+		hashtable divide into their type;
+		
+
+	2.1.4 Aggregate
+		
+		If this aggregate is a based aggregate which didn't have gourp attribute.
+		We will skip the setPartition's function
+
+		If this aggregate have group attribute. Firstly, we will create partitions file
+		The partitions file's hashkey used the group attribute's value mod 10.
+
+		After that we will call  setDataOutputmap function. In this action, we will read every record and store the key value into outmap
+
+		In this class we define the three addition map uesd to store the output data.
+		_intOutMap _floatOutMap _stringOutMap divide into their type.
+		
+
+	2.1.5 Grace Hash Join
+
+		First we will divide partition both relation using hash function h: R tuples in partition I will only
+		match S tuples in partition i.
+		The hash function is used the condition attribute value mod numpartition to the hash key.
+		After that we will have probe action.
+		We will load a partition of R file to build in-memory hashtable one by one base on other hash function.
+		Then used The corresponding right partition file to matche the result data.
+		If matched, we will add <r,s> into output buffer.
+		
+		In this Class, We defined three hashmap :  _inthashmap _floathashmap _stringhashmap uesd to build in-memory
+		hashtable divide into their type;
+		
+	2.1.6 Index Nested Loops Join
+
+		If there is an index on the join column of one relation(R), we will used this function IndexNested Loops Join
+		We will get rid from the indexFile which created by RM
+		Then we get all tuples from the rid, and build in-memory hashtable base on R.
+		After that we will match the data to <r,s> into output buffer
+
+                In this Class, We defined three hashmap :  _inthashmap _floathashmap _stringhashmap uesd to build in-memory
+		hashtable divide into their type;
+	
+	
